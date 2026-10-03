@@ -8,7 +8,7 @@ npm run dev        # http://localhost:3000
 npm run build      # hasil statis di out/
 npm start          # sajikan out/ untuk uji PWA/offline
 ```
-Service worker hanya dibuat saat `dev`/`build` (skrip `scripts/stamp-sw.mjs`), dan paling mudah diuji lewat `npm run build && npm start`.
+Gerbang orang tua memakai soal hitung (ketuk jawaban). Service worker hanya dibuat saat `dev`/`build` (skrip `scripts/stamp-sw.mjs`), dan paling mudah diuji lewat `npm run build && npm start`.
 
 ## Struktur
 - `app/` layout, halaman, CSS global

@@ -1,1 +1,4 @@
-{"name":"taman-main","version":"1.0.0","private":true,"scripts":{"predev":"node scripts/stamp-sw.mjs","prebuild":"node scripts/stamp-sw.mjs","dev":"next dev","build":"next build","start":"npx serve out","lint":"tsc --noEmit"},"dependencies":{"next":"^16.3.8","react":"^19.0.0","react-dom":"^19.0.0"},"devDependencies":{"@types/node":"^22.0.0","@types/react":"^19.0.0","@types/react-dom":"^19.0.0","typescript":"^5.5.0"}}
+{"name":"taman-main","version":"1.0.0","private":true,
+"scripts":{"predev":"node scripts/stamp-sw.mjs","prebuild":"node scripts/stamp-sw.mjs","dev":"next dev","build":"next build","start":"npx serve out","lint":"tsc --noEmit"},
+"dependencies":{"next":"^15.0.0","react":"^19.0.0","react-dom":"^19.0.0"},
+"devDependencies":{"typescript":"^5.5.0","@types/node":"^22.0.0","@types/react":"^19.0.0","@types/react-dom":"^19.0.0"}}

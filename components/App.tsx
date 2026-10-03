@@ -30,12 +30,13 @@ export default function App() {
   useEffect(() => {
     loadProfiles().then(setPs);
     navigator.storage?.persist?.();
+    const noMenu = (e: Event) => { if (!(e.target instanceof HTMLInputElement)) e.preventDefault(); }; document.addEventListener('contextmenu', noMenu);
     const vis = () => { if (document.hidden) leaveRef.current(); }; document.addEventListener('visibilitychange', vis);
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').then((r) => {
       const chk = () => { if (r.waiting && navigator.serviceWorker.controller) setUpd(true); }; chk();
       r.addEventListener('updatefound', () => r.installing?.addEventListener('statechange', chk));
     });
-    return () => document.removeEventListener('visibilitychange', vis);
+    return () => { document.removeEventListener('visibilitychange', vis); document.removeEventListener('contextmenu', noMenu); };
   }, []);
 
   const hub = () => { if (cur && minsOn(cur) >= cur.limit) { say(cur.vol, 'Waktunya istirahat'); return setScr({ s: 'rest' }); } setScr({ s: 'hub' }); };

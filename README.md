@@ -10,6 +10,9 @@ npm start          # pratinjau dist/ di http://localhost:4173 untuk uji PWA/offl
 ```
 Gerbang orang tua memakai soal hitung (ketuk jawaban). Service worker dibuat setelah `build` dari daftar aset Vite di `dist/`, termasuk suara. Mode `dev` tidak mendaftarkan service worker agar perubahan kode langsung terlihat. Uji offline dengan `npm run build` lalu `npm start`.
 
+## Pasang di ponsel
+Buka situs yang sudah di-deploy melalui **HTTPS**. Alamat `http://192.168...` atau IP lokal dari komputer tidak dapat mendaftarkan service worker di ponsel. `npm run dev` juga tidak mendaftarkan service worker. Di Android Chrome, gunakan tombol **Pasang** jika muncul atau menu browser **Instal aplikasi / Tambahkan ke layar utama**. Di iPhone Safari, gunakan **Bagikan → Tambahkan ke Layar Utama**.
+
 ## Struktur
 - `index.html` dan `main.tsx` entry point; `app/globals.css` gaya global
 - `components/App.tsx` alur layar, profil, waktu bermain

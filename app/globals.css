@@ -61,6 +61,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 .hold.on span{transform:scaleX(1);transition:transform 3s linear}
 .gear{position:fixed;right:12px;bottom:12px;opacity:.35;background:none;font-size:1.6rem}
 .gear:focus-visible{opacity:1}
+.install-tip{display:flex;align-items:center;gap:12px;width:100%;max-width:760px;padding:14px 16px;border-radius:20px;background:var(--card);box-shadow:0 5px 0 rgba(43,42,76,.1);text-align:left}
+.install-tip__icon{font-size:2rem}.install-tip strong{font-size:1rem}.install-tip p{margin:3px 0 0;font-size:.9rem;line-height:1.35}.install-tip button{min-height:48px;min-width:96px;margin-left:auto}
 .p{max-width:640px;margin:0 auto;padding:16px 16px 60px;font-size:1rem;line-height:1.5}
 .p h2{margin:22px 0 8px;font-size:1.25rem}
 .box{background:var(--card);border-radius:20px;padding:14px;margin:8px 0}
@@ -74,4 +76,5 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 @media(max-height:600px){.c{gap:12px;padding:12px}.grid{gap:12px}.tile{padding:10px;font-size:3rem}}
 @media(max-height:620px){.color-game{gap:10px;padding:12px}.color-game__header h2{font-size:1.4rem}.color-game__scene{min-height:180px}.color-game__ball{width:112px}.color-game__choice{min-height:64px}.color-game__swatch{width:40px;height:40px}}
 @media(max-width:360px){.color-game__choice{gap:6px;padding:6px;font-size:1rem}.color-game__swatch{width:36px;height:36px}}
+@media(max-width:480px){.install-tip{flex-wrap:wrap}.install-tip button{width:100%;margin-left:0}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}

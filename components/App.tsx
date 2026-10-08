@@ -4,6 +4,7 @@ import { GAMES, loadProfiles, saveProfiles, minsOn, ymd, type GameProps, type Pr
 import { playWin, say } from '@/lib/audio';
 import Gate from './Gate';
 import Parent from './Parent';
+import Install from './Install';
 import Balon from './games/Balon';
 import Hewan from './games/Hewan';
 import Warna from './games/Warna';
@@ -98,7 +99,7 @@ export default function App() {
   if (scr.s === 'pick') body = <>
     <div className="c"><p className="t">Siapa yang main?</p>{ps.length === 0 && <p>Ketuk ➕ untuk membuat profil bersama orang tua.</p>}<div className="grid">
       {ps.map((p, i) => <button key={p.id} className="tile" onClick={() => { setCi(i); setScr({ s: 'hub' }); }}>{p.av}<small>{p.name}</small></button>)}
-      <button className="tile" aria-label="Tambah profil" onClick={() => setScr({ s: 'gate', add: true })}>➕</button></div></div>
+      <button className="tile" aria-label="Tambah profil" onClick={() => setScr({ s: 'gate', add: true })}>➕</button></div><Install /></div>
     <button className="gear" aria-label="Area orang tua" onClick={() => setScr({ s: 'gate', add: false })}>⚙</button></>;
   else if (scr.s === 'gate') body = <Gate onBack={pick} onOk={() => setScr({ s: 'parent', i: scr.add ? -1 : 0 })} />;
   else if (scr.s === 'parent') body = <Parent ps={ps} i={scr.i} upd={upd} onSel={(i) => setScr({ s: 'parent', i })} onPatch={patch}

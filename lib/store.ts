@@ -14,6 +14,48 @@ export const minsOn = (p: Profile, d = ymd()) => p.days[d] ?? 0;
 export const shuf = <T,>(a: T[]) => [...a].sort(() => Math.random() - 0.5);
 const open = () => new Promise<IDBDatabase>((res, rej) => { const q = indexedDB.open('taman', 1); q.onupgradeneeded = () => q.result.createObjectStore('kv'); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
 export async function loadProfiles(): Promise<Profile[]> {
-  try { const d = await open(); return await new Promise((res) => { const q = d.transaction('kv').objectStore('kv').get('db'); q.onsuccess = () => res(q.result?.profiles ?? []); q.onerror = () => res([]); }); } catch { return []; }
+  try {
+    const db = await open();
+    try { return await new Promise((res) => { const q = db.transaction('kv').objectStore('kv').get('db'); q.onsuccess = () => res(q.result?.profiles ?? []); q.onerror = () => res([]); }); }
+    finally { db.close(); }
+  } catch { return []; }
 }
-export async function saveProfiles(profiles: Profile[]) { try { (await open()).transaction('kv', 'readwrite').objectStore('kv').put({ profiles }, 'db'); } catch {} }
+let lastSave = Promise.resolve();
+export function saveProfiles(profiles: Profile[]) {
+  lastSave = lastSave.then(async () => {
+    const db = await open();
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const tx = db.transaction('kv', 'readwrite');
+        tx.objectStore('kv').put({ profiles }, 'db');
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+        tx.onabort = () => reject(tx.error);
+      });
+    } finally { db.close(); }
+  }).catch((error) => { console.error('Gagal menyimpan profil:', error); });
+  return lastSave;
+}
+
+const record = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
+const integer = (value: unknown, min: number, max = Number.MAX_SAFE_INTEGER) => Number.isInteger(value) && (value as number) >= min && (value as number) <= max;
+export function parseBackup(value: unknown): Profile | null {
+  if (!record(value)) return null;
+  const { name, av, year, stars, limit, off, vol, plays, days } = value;
+  const currentYear = new Date().getFullYear();
+  if (typeof name !== 'string' || !name.trim() || name.trim().length > 12 ||
+      typeof av !== 'string' || !AVATARS.includes(av) ||
+      !integer(year, 1900, currentYear) || !integer(stars, 0) ||
+      ![10, 20, 30].includes(limit as number) ||
+      !Array.isArray(off) || !off.every((g) => typeof g === 'string' && Object.hasOwn(GAMES, g)) ||
+      typeof vol !== 'number' || !Number.isFinite(vol) || vol < 0 || vol > 1 ||
+      !record(plays) || !record(days)) return null;
+  for (const [game, play] of Object.entries(plays)) {
+    if (!Object.hasOwn(GAMES, game) || !record(play) || !integer(play.n, 0) || !integer(play.level, 1, 5) || !integer(play.streak, 0)) return null;
+  }
+  for (const [date, minutes] of Object.entries(days)) {
+    if (!/^\d{4}-\d{1,2}-\d{1,2}$/.test(date) || typeof minutes !== 'number' || !Number.isFinite(minutes) || minutes < 0 || minutes > 1440) return null;
+  }
+  return { id: Date.now(), name: name.trim(), av, year: year as number, stars: stars as number,
+    limit: limit as number, off, vol, plays: plays as Record<string, Play>, days: days as Record<string, number> };
+}

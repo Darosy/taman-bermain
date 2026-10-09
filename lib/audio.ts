@@ -33,8 +33,83 @@ export function balloonPop(vol: number) {
     tone.start(now); tone.stop(now + duration);
   } catch {}
 }
-export function say(vol: number, t: string) {
-  try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = 'id-ID'; u.volume = vol; speechSynthesis.speak(u); } catch {}
+type VoiceManifest = Record<string, string>;
+let voiceManifest: Promise<VoiceManifest> | undefined;
+let narrationClip: HTMLAudioElement | null = null;
+let narrationId = 0;
+const normalizeSpeech = (value: string) => value.trim().replace(/\s+/g, ' ').toLocaleLowerCase('id-ID');
+
+function loadVoiceManifest(): Promise<VoiceManifest> {
+  voiceManifest ??= fetch('/sounds/voice/manifest.json')
+    .then((response) => response.ok ? response.json() : {})
+    .then((value: unknown) => {
+      if (typeof value !== 'object' || value === null || Array.isArray(value)) return {};
+      return Object.fromEntries(Object.entries(value).filter((entry): entry is [string, string] =>
+        typeof entry[1] === 'string' && /^[a-z0-9][a-z0-9_.-]*\.(mp3|m4a|ogg|wav)$/i.test(entry[1]))
+        .map(([phrase, file]) => [normalizeSpeech(phrase), file]));
+    }).catch(() => ({}));
+  return voiceManifest;
+}
+
+export function prepareNarration() {
+  void loadVoiceManifest();
+  try { window.speechSynthesis.getVoices(); } catch {}
+}
+
+function preferredIndonesianVoice(voices: SpeechSynthesisVoice[]) {
+  const indonesian = voices.filter((voice) => /^id(?:[-_]|$)/i.test(voice.lang));
+  const female = (voice: SpeechSynthesisVoice) => /gadis|sari|ayu|female|woman|wanita|perempuan/i.test(voice.name);
+  return indonesian.find((voice) => female(voice) && voice.localService)
+    ?? indonesian.find(female)
+    ?? indonesian.find((voice) => voice.localService)
+    ?? indonesian[0];
+}
+
+function speakWithBrowser(vol: number, phrase: string, id: number) {
+  try {
+    const synth = window.speechSynthesis;
+    const speak = () => {
+      if (id !== narrationId) return;
+      const utterance = new SpeechSynthesisUtterance(phrase);
+      utterance.lang = 'id-ID';
+      utterance.volume = Math.max(0, Math.min(1, vol));
+      utterance.rate = .95;
+      utterance.pitch = 1;
+      utterance.voice = preferredIndonesianVoice(synth.getVoices()) ?? null;
+      synth.speak(utterance);
+    };
+    if (synth.getVoices().length) { speak(); return; }
+    const ready = () => { clearTimeout(timeout); synth.removeEventListener('voiceschanged', ready); speak(); };
+    synth.addEventListener('voiceschanged', ready);
+    const timeout = setTimeout(ready, 800);
+  } catch {}
+}
+
+export function stopNarration() {
+  narrationId++;
+  narrationClip?.pause(); narrationClip = null;
+  try { window.speechSynthesis.cancel(); } catch {}
+}
+
+export function say(vol: number, phrase: string) {
+  stopNarration();
+  if (vol <= 0) return;
+  const id = narrationId;
+  void loadVoiceManifest().then(async (manifest) => {
+    if (id !== narrationId) return;
+    const file = manifest[normalizeSpeech(phrase)];
+    if (file) {
+      try {
+        const clip = new Audio(`/sounds/voice/${file}`);
+        clip.volume = Math.max(0, Math.min(1, vol));
+        narrationClip = clip;
+        clip.addEventListener('ended', () => { if (narrationClip === clip) narrationClip = null; }, { once: true });
+        await clip.play();
+        return;
+      } catch { narrationClip = null; }
+    }
+    if (id === narrationId) speakWithBrowser(vol, phrase, id);
+  });
 }
 export function playClip(path: string, vol: number): HTMLAudioElement | null {
   if (vol <= 0) return null;
@@ -52,12 +127,14 @@ export function stopAnswer() {
   answerClip = null;
 }
 export function playAnswer(correct: boolean, vol: number) {
+  stopNarration();
   stopAnswer();
   const clip = playClip(correct ? '/sounds/correct.mp3' : '/sounds/wrong.mp3', vol);
   answerClip = clip;
   clip?.addEventListener('ended', () => { if (answerClip === clip) answerClip = null; }, { once: true });
 }
 export function playWin(vol: number) {
+  stopNarration();
   stopAnswer();
   return playClip('/sounds/win-success.mp3', vol);
 }
@@ -65,6 +142,7 @@ export function playWin(vol: number) {
 export type EverydaySound = 'bell' | 'rain' | 'clock' | 'horn';
 export function playEverydaySound(kind: EverydaySound, vol: number) {
   if (vol <= 0) return () => {};
+  stopNarration();
   try {
     ac = ac ?? new AudioContext();
     if (ac.state === 'suspended') void ac.resume().catch(() => {});

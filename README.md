@@ -22,7 +22,19 @@ Buka situs yang sudah di-deploy melalui **HTTPS**. Alamat `http://192.168...` at
 - `components/games/*` satu berkas per game. Tambah game: buat komponen, daftarkan di `lib/store.ts` (GAMES) dan `components/App.tsx` (GAME_UI)
 - `lib/` penyimpanan IndexedDB, audio
 - `scripts/sw.template.js` service worker (diberi versi dan daftar aset tiap build)
-- `public/sounds/` suara game hewan dan kemenangan
+- `public/sounds/` suara game hewan, jawaban, dan kemenangan
+
+## Suara instruksi bahasa Indonesia
+
+Instruksi memakai rekaman jika tersedia; jika belum, aplikasi memilih suara perempuan bahasa Indonesia yang tersedia di perangkat. Pilihan suara browser berbeda antar perangkat dan tidak menjamin suara perempuan atau kualitas rekaman manusia. Agar konsisten dan terdengar alami, rekam instruksi dengan penutur perempuan bahasa Indonesia dan simpan berkas MP3/M4A/OGG/WAV di `public/sounds/voice/`. Daftarkan kalimat dan nama berkasnya di `public/sounds/voice/manifest.json`, misalnya:
+
+```json
+{
+  "Dengarkan suara, lalu pilih gambar yang cocok.": "suara-sekitar.mp3"
+}
+```
+
+Kalimat pada manifest harus sama dengan kalimat yang dikirim ke `say()`; huruf besar dan spasi berlebih diabaikan. Rekaman ikut tersimpan dalam cache PWA saat build, sehingga bisa dipakai offline.
 
 ## Deploy ke Vercel
 Push ke GitHub, Import Project di Vercel. `vercel.json` memilih preset Vite, menjalankan `npm run build`, menyajikan `dist/`, dan mengatur header keamanan serta cache.

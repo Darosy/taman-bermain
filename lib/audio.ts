@@ -61,3 +61,44 @@ export function playWin(vol: number) {
   stopAnswer();
   return playClip('/sounds/win-success.mp3', vol);
 }
+
+export type EverydaySound = 'bell' | 'rain' | 'clock' | 'horn';
+export function playEverydaySound(kind: EverydaySound, vol: number) {
+  if (vol <= 0) return () => {};
+  try {
+    ac = ac ?? new AudioContext();
+    if (ac.state === 'suspended') void ac.resume().catch(() => {});
+    const context = ac, now = context.currentTime;
+    const sources: AudioScheduledSourceNode[] = [];
+    const tone = (frequency: number, offset: number, duration: number, gain: number, type: OscillatorType = 'sine') => {
+      const oscillator = context.createOscillator(), volume = context.createGain();
+      oscillator.type = type; oscillator.frequency.value = frequency;
+      volume.gain.setValueAtTime(Math.max(.0001, gain * vol), now + offset);
+      volume.gain.exponentialRampToValueAtTime(.0001, now + offset + duration);
+      oscillator.connect(volume); volume.connect(context.destination);
+      oscillator.onended = () => { oscillator.disconnect(); volume.disconnect(); };
+      oscillator.start(now + offset); oscillator.stop(now + offset + duration);
+      sources.push(oscillator);
+    };
+    if (kind === 'bell') {
+      tone(880, 0, 1, .18); tone(1320, 0, .8, .08); tone(1760, 0, .55, .04);
+    } else if (kind === 'clock') {
+      for (const offset of [0, .4, .8]) tone(1100, offset, .06, .13, 'square');
+    } else if (kind === 'horn') {
+      tone(260, 0, .6, .11, 'sawtooth'); tone(330, 0, .6, .08, 'sawtooth');
+    } else {
+      const duration = 1.4, buffer = context.createBuffer(1, Math.ceil(context.sampleRate * duration), context.sampleRate);
+      const samples = buffer.getChannelData(0);
+      for (let i = 0; i < samples.length; i++) samples[i] = Math.random() * 2 - 1;
+      const noise = context.createBufferSource(), filter = context.createBiquadFilter(), volume = context.createGain();
+      noise.buffer = buffer; filter.type = 'highpass'; filter.frequency.value = 1200;
+      volume.gain.setValueAtTime(.0001, now);
+      volume.gain.exponentialRampToValueAtTime(.09 * vol, now + .12);
+      volume.gain.exponentialRampToValueAtTime(.0001, now + duration);
+      noise.connect(filter); filter.connect(volume); volume.connect(context.destination);
+      noise.onended = () => { noise.disconnect(); filter.disconnect(); volume.disconnect(); };
+      noise.start(now); noise.stop(now + duration); sources.push(noise);
+    }
+    return () => { for (const source of sources) { try { source.stop(); } catch {} } };
+  } catch { return () => {}; }
+}

@@ -1,6 +1,8 @@
 # Taman Main (Vite + React)
 React dan TypeScript dibangun dengan Vite. Tanpa backend, data lokal (IndexedDB), PWA offline.
 
+Tersedia 16 game: Balon, Hewan, Warna, Kartu Memori, Mewarnai, Puzzle 3–6 keping, Bentuk, Angka 1–10, Huruf A–Z, Urutan Pola, Penjumlahan, Susun Huruf, Labirin, Suara di Sekitar, Pilah Barang, dan Urutkan Cerita. Semua game mengikuti tingkat kesulitan profil, kontrol orang tua, batas waktu bermain, dan suara umpan balik.
+
 ## Jalankan lokal
 ```bash
 npm install

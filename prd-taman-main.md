@@ -162,3 +162,12 @@ Kumpulan mini-game edukasi berbasis web (PWA) untuk anak usia 2-5 tahun. Satu hu
 - Laporan progres yang dapat dibagikan (PDF/tautan). Orang tua hanya melihat dashboard di perangkat; cadangan data tetap lewat ekspor/impor berkas.
 
 **Pertanyaan terbuka:** tidak ada saat ini.
+
+| Age | Game idea | Simple interaction |
+|---|---|---|
+| 2–3 | **Suara di Sekitar** | Hear a sound, tap the matching animal or object. |
+| 2–3 | **Beri Makan Hewan** | Drag one large food item to an animal. |
+| 3–4 | **Pilah Barang** | Put toys, clothes, and food into matching baskets. |
+| 3–4 | **Kenali Perasaan** | Match a spoken situation to a happy, sad, or surprised face. |
+| 4–5 | **Urutkan Cerita** | Arrange three pictures: first, next, last. |
+| 4–5 | **Ikuti Irama** | Repeat a short sequence of drum taps. |

@@ -9,8 +9,20 @@ import Balon from './games/Balon';
 import Hewan from './games/Hewan';
 import Warna from './games/Warna';
 import Memori from './games/Memori';
+import Mewarnai from './games/Mewarnai';
+import Puzzle from './games/Puzzle';
+import Bentuk from './games/Bentuk';
+import Angka from './games/Angka';
+import Huruf from './games/Huruf';
+import Pola from './games/Pola';
+import Tambah from './games/Tambah';
+import SusunHuruf from './games/SusunHuruf';
+import Labirin from './games/Labirin';
+import SuaraSekitar from './games/SuaraSekitar';
+import PilahBarang from './games/PilahBarang';
+import UrutkanCerita from './games/UrutkanCerita';
 
-const GAME_UI: Record<string, ComponentType<GameProps>> = { balon: Balon, hewan: Hewan, warna: Warna, memori: Memori };
+const GAME_UI: Record<string, ComponentType<GameProps>> = { balon: Balon, hewan: Hewan, warna: Warna, memori: Memori, mewarnai: Mewarnai, puzzle: Puzzle, bentuk: Bentuk, angka: Angka, huruf: Huruf, pola: Pola, tambah: Tambah, susun: SusunHuruf, labirin: Labirin, suara: SuaraSekitar, pilah: PilahBarang, cerita: UrutkanCerita };
 type Scr = { s: 'pick' } | { s: 'hub' } | { s: 'game'; g: string } | { s: 'win'; g: string } | { s: 'rest' } | { s: 'gate'; add: boolean } | { s: 'parent'; i: number };
 
 export default function App() {

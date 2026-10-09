@@ -8,6 +8,18 @@ export const GAMES: Record<string, { name: string; icon: string; age: number; sk
   hewan: { name: 'Hewan', icon: '🐶', age: 2, skill: 'Kosakata hewan', tip: 'Tirukan suara hewan bersama anak.' },
   warna: { name: 'Warna', icon: '🎨', age: 2, skill: 'Warna', tip: 'Coba sebutkan warna benda di rumah.' },
   memori: { name: 'Kartu Memori', icon: '🃏', age: 4, skill: 'Memori', tip: 'Sembunyikan satu mainan, minta anak menebak yang hilang.' },
+  mewarnai: { name: 'Mewarnai', icon: '🖍️', age: 2, skill: 'Kreativitas', tip: 'Ajak anak bercerita tentang gambarnya.' },
+  puzzle: { name: 'Puzzle', icon: '🧩', age: 3, skill: 'Pemecahan masalah', tip: 'Susun potongan gambar bersama anak.' },
+  bentuk: { name: 'Bentuk', icon: '🔺', age: 2, skill: 'Mengenal bentuk', tip: 'Cari bentuk lingkaran dan persegi di rumah.' },
+  angka: { name: 'Angka', icon: '🔢', age: 3, skill: 'Berhitung', tip: 'Hitung benda sehari-hari bersama anak.' },
+  huruf: { name: 'Huruf', icon: '🔤', age: 4, skill: 'Mengenal huruf', tip: 'Cari huruf awal nama anak pada benda di sekitar.' },
+  pola: { name: 'Urutan Pola', icon: '✨', age: 4, skill: 'Mengenal pola', tip: 'Buat urutan warna atau benda dan minta anak melanjutkannya.' },
+  tambah: { name: 'Penjumlahan', icon: '➕', age: 5, skill: 'Berhitung', tip: 'Gabungkan dua kelompok benda kecil lalu hitung bersama.' },
+  susun: { name: 'Susun Huruf', icon: '🔡', age: 5, skill: 'Mengenal kata', tip: 'Sebutkan nama benda dan cari huruf awalnya bersama anak.' },
+  labirin: { name: 'Labirin', icon: '🚀', age: 4, skill: 'Pemecahan masalah', tip: 'Ajak anak mencari jalan dengan jari di atas kertas.' },
+  suara: { name: 'Suara di Sekitar', icon: '🔊', age: 2, skill: 'Mendengar dan mengenali suara', tip: 'Dengarkan suara hujan, jam, atau kendaraan bersama anak.' },
+  pilah: { name: 'Pilah Barang', icon: '🧺', age: 3, skill: 'Mengelompokkan benda', tip: 'Ajak anak memilah mainan, pakaian, dan makanan di rumah.' },
+  cerita: { name: 'Urutkan Cerita', icon: '📖', age: 4, skill: 'Berpikir berurutan', tip: 'Ceritakan tiga kejadian sederhana lalu susun urutannya bersama anak.' },
 };
 export const ymd = (d = new Date()) => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
 export const minsOn = (p: Profile, d = ymd()) => p.days[d] ?? 0;

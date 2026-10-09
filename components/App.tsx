@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState, type ComponentType } from 'react';
 import { GAMES, loadProfiles, saveProfiles, minsOn, ymd, type GameProps, type Profile } from '@/lib/store';
-import { playWin, say } from '@/lib/audio';
+import { playWin, prepareNarration, say, stopNarration } from '@/lib/audio';
 import Gate from './Gate';
 import Parent from './Parent';
 import Install from './Install';
@@ -55,11 +55,12 @@ export default function App() {
 
   useEffect(() => {
     let cancelled = false;
+    prepareNarration();
     loadProfiles().then((profiles) => { if (!cancelled) { psRef.current = profiles; setPs(profiles); setLoaded(true); } });
     navigator.storage?.persist?.();
     const noMenu = (e: Event) => { if (!(e.target instanceof HTMLInputElement)) e.preventDefault(); }; document.addEventListener('contextmenu', noMenu);
     const vis = () => {
-      if (document.hidden) leaveRef.current();
+      if (document.hidden) { stopNarration(); leaveRef.current(); }
       else if (scrRef.current.s === 'game' && !t0.current) {
         const i = ciRef.current, p = i === null ? null : psRef.current[i];
         if (p && minsOn(p) >= p.limit) setScr({ s: 'rest' });
@@ -84,8 +85,9 @@ export default function App() {
     return () => { cancelled = true; clearInterval(tick); window.removeEventListener('pagehide', pagehide); document.removeEventListener('visibilitychange', vis); document.removeEventListener('contextmenu', noMenu); };
   }, []);
 
-  const hub = () => { const p = ciRef.current === null ? null : psRef.current[ciRef.current]; if (p && minsOn(p) >= p.limit) { say(p.vol, 'Waktunya istirahat'); return setScr({ s: 'rest' }); } setScr({ s: 'hub' }); };
+  const hub = () => { stopNarration(); const p = ciRef.current === null ? null : psRef.current[ciRef.current]; if (p && minsOn(p) >= p.limit) { say(p.vol, 'Waktunya istirahat'); return setScr({ s: 'rest' }); } setScr({ s: 'hub' }); };
   const play = (g: string) => {
+    stopNarration();
     const n = leave(); const p = ci !== null ? n[ci] : null;
     if (p && minsOn(p) >= p.limit) return setScr({ s: 'rest' });
     winning.current = false; t0.current = Date.now(); setScr({ s: 'game', g });
@@ -99,7 +101,7 @@ export default function App() {
     playWin(cur?.vol ?? 1);
     setScr({ s: 'win', g });
   };
-  const pick = () => { leave(); setCi(null); setScr({ s: 'pick' }); };
+  const pick = () => { stopNarration(); leave(); setCi(null); setScr({ s: 'pick' }); };
   const applyUpdate = async () => {
     const registration = await navigator.serviceWorker.getRegistration();
     if (!registration?.waiting) return;
